@@ -136,115 +136,55 @@ class MazeVisualizer:
     
     def _solve_dfs_animated(self):
         """Real-time animated DFS using generator"""
-        stack = [self.start_pos]
-        parent = {self.start_pos: None}
+        generator = self.maze_solver.solve_animated(
+            self.start_pos, self.end_pos, Algorithm.DFS
+        )
         
-        while stack:
-            current = stack[-1]  # Peek at top of stack
-            self.exploring_cell = current
-            yield  # Pause for animation
+        for state in generator:
+            self.exploring_cell = state.get('current')
             
-            # Mark as visited
-            if current not in self.current_visited:
-                self.current_visited.add(current)
-                yield  # Pause to show exploration
+            if state['action'] == 'visited':
+                self.current_visited.add(state['current'])
+            elif state['action'] == 'found':
+                self.solution_path = state['path']
             
-            # Check if we found the end
-            if current == self.end_pos:
-                # Reconstruct path
-                path_cell = current
-                while path_cell is not None:
-                    self.solution_path.append(path_cell)
-                    path_cell = parent[path_cell]
-                self.solution_path.reverse()
-                return
-            
-            # Find unvisited neighbors
-            neighbors = self.maze_solver._get_neighbors(current[0], current[1])
-            unvisited_neighbors = [n for n in neighbors if n not in self.current_visited]
-            
-            if unvisited_neighbors:
-                # Choose first unvisited neighbor
-                next_cell = unvisited_neighbors[0]
-                parent[next_cell] = current
-                stack.append(next_cell)
-            else:
-                # Backtrack
-                stack.pop()
-                yield  # Pause to show backtracking
+            yield
     
     def _solve_bfs_animated(self):
         """Real-time animated BFS using generator"""
-        from collections import deque
-        queue = deque([self.start_pos])
-        parent = {self.start_pos: None}
+        generator = self.maze_solver.solve_animated(
+            self.start_pos, self.end_pos, Algorithm.BFS
+        )
         
-        while queue:
-            current = queue.popleft()
-            self.exploring_cell = current
-            yield  # Pause for animation
+        for state in generator:
+            self.exploring_cell = state.get('current')
             
-            # Mark as visited
-            if current not in self.current_visited:
-                self.current_visited.add(current)
-                yield  # Pause to show exploration
+            if state['action'] == 'neighbor_added':
+                self.current_visited.add(state.get('neighbor_added'))
+            elif state['action'] == 'found':
+                self.solution_path = state['path']
             
-            # Check if we found the end
-            if current == self.end_pos:
-                # Reconstruct path
-                path_cell = current
-                while path_cell is not None:
-                    self.solution_path.append(path_cell)
-                    path_cell = parent[path_cell]
-                self.solution_path.reverse()
-                return
-            
-            # Add unvisited neighbors to queue
-            neighbors = self.maze_solver._get_neighbors(current[0], current[1])
-            for neighbor in neighbors:
-                if neighbor not in self.current_visited and neighbor not in parent:
-                    parent[neighbor] = current
-                    queue.append(neighbor)
+            yield
     
     def _solve_dijkstra_animated(self):
         """Real-time animated Dijkstra using generator"""
-        import heapq
-        pq = [(0, self.start_pos)]
-        distances = {self.start_pos: 0}
-        parent = {self.start_pos: None}
+        generator = self.maze_solver.solve_animated(
+            self.start_pos, self.end_pos, Algorithm.DIJKSTRA
+        )
         
-        while pq:
-            current_dist, current = heapq.heappop(pq)
-            self.exploring_cell = current
-            yield  # Pause for animation
+        for state in generator:
+            self.exploring_cell = state.get('current')
             
-            # Skip if we've already processed this cell with a shorter distance
-            if current in self.current_visited:
-                continue
+            if state['action'] == 'visited':
+                self.current_visited.add(state['current'])
+            elif state['action'] == 'distance_updated':
+                neighbor = state.get('neighbor_updated')
+                if neighbor:
+                    self.current_visited.add(neighbor)
+            elif state['action'] == 'found':
+                self.solution_path = state['path']
             
-            # Mark as visited
-            self.current_visited.add(current)
-            yield  # Pause to show exploration
-            
-            # Check if we found the end
-            if current == self.end_pos:
-                # Reconstruct path
-                path_cell = current
-                while path_cell is not None:
-                    self.solution_path.append(path_cell)
-                    path_cell = parent[path_cell]
-                self.solution_path.reverse()
-                return
-            
-            # Process neighbors
-            neighbors = self.maze_solver._get_neighbors(current[0], current[1])
-            for neighbor in neighbors:
-                if neighbor not in self.current_visited:
-                    new_distance = current_dist + 1
-                    if neighbor not in distances or new_distance < distances[neighbor]:
-                        distances[neighbor] = new_distance
-                        parent[neighbor] = current
-                        heapq.heappush(pq, (new_distance, neighbor))
+            yield
     
     def draw_maze(self):
         """Draw the maze on the screen"""

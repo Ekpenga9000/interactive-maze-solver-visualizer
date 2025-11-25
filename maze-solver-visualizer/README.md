@@ -106,12 +106,18 @@ python test_components.py
 
 ```
 maze-solver-visualizer/
-├── main.py              # Main application entry point
-├── maze_generator.py    # Maze generation using recursive backtracking
-├── maze_solver.py       # Pathfinding algorithms (DFS, BFS, Dijkstra)
-├── maze_visualizer.py   # Pygame visualization and user interface
-├── requirements.txt     # Python dependencies
-└── README.md           # This file
+├── algorithms/              # Modular pathfinding algorithm implementations
+│   ├── __init__.py          # Package initialization with exports
+│   ├── base_algorithm.py    # Abstract base class for algorithms
+│   ├── depth_first_search.py   # DFS implementation
+│   ├── breadth_first_search.py # BFS implementation
+│   └── dijkstra.py          # Dijkstra's algorithm implementation
+├── main.py                  # Main application entry point
+├── maze_generator.py        # Maze generation using recursive backtracking
+├── maze_solver.py           # Algorithm coordinator and solver interface
+├── maze_visualizer.py       # Pygame visualization and user interface
+├── requirements.txt         # Python dependencies
+└── README.md               # This file
 ```
 
 ## Algorithms
