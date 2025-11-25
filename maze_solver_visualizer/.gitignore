@@ -204,3 +204,49 @@ $RECYCLE.BIN/
 
 # .nfs files are created when an open file is removed but is still being accessed
 .nfs*
+
+# Project-specific
+# Demo and test output files
+demo_maze.png
+demo_solution.png
+maze_screenshot_*.png
+maze_output_*.txt
+
+# Performance test results
+benchmark_results.json
+performance_logs/
+*.benchmark
+
+# Generated maze files (if we add save/load functionality)
+saved_mazes/
+*.maze
+*.mze
+
+# Video recordings or animated GIFs for documentation
+demo.gif
+demo.mp4
+demo.avi
+recordings/
+
+# Coverage reports (HTML and XML)
+htmlcov/
+coverage.xml
+.coverage.*
+
+# Pytest cache and temporary test files
+.pytest_cache/
+test_output/
+test_results/
+
+# Temporary maze visualization files
+temp_maze_*.png
+temp_visualization_*
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+
+# Python virtual environment (project-specific)
+maze_env/
+venv_maze/

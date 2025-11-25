@@ -31,12 +31,14 @@ This project demonstrates fundamental computer science algorithms through an int
 ## 🚀 Installation
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/yourusername/maze-solver-visualizer.git
    cd maze-solver-visualizer
    ```
 
 2. **Create a virtual environment (recommended):**
+
    ```bash
    python -m venv .venv
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
@@ -50,19 +52,25 @@ This project demonstrates fundamental computer science algorithms through an int
 ## 🎮 Usage
 
 ### Quick Start
+
 Run the main application:
+
 ```bash
 python main.py
 ```
 
 ### Demo Mode
+
 See algorithms in action without GUI:
+
 ```bash
 python demo.py
 ```
 
 ### Run Tests
+
 Verify everything works:
+
 ```bash
 python test_components.py
 ```
@@ -70,14 +78,17 @@ python test_components.py
 ## 📸 Screenshots
 
 ### Main Interface
+
 ![Main Interface](docs/main_interface.png)
 
 ### Algorithm Comparison
-| Depth-First Search | Breadth-First Search | Dijkstra's Algorithm |
-|-------------------|---------------------|---------------------|
+
+| Depth-First Search        | Breadth-First Search      | Dijkstra's Algorithm                |
+| ------------------------- | ------------------------- | ----------------------------------- |
 | ![DFS](docs/dfs_demo.png) | ![BFS](docs/bfs_demo.png) | ![Dijkstra](docs/dijkstra_demo.png) |
 
 ### Console Demo
+
 ![Console Demo](docs/console_demo.png)
 
 ### Controls
@@ -123,16 +134,19 @@ maze-solver-visualizer/
 ## Algorithms
 
 ### Depth-First Search (DFS)
+
 - **Type**: Recursive backtracking
 - **Properties**: May not find shortest path, but uses less memory
 - **Use case**: Good for exploring all possible paths
 
 ### Breadth-First Search (BFS)
+
 - **Type**: Queue-based level traversal
 - **Properties**: Guarantees shortest path in unweighted graphs
 - **Use case**: Optimal for finding shortest path
 
 ### Dijkstra's Algorithm
+
 - **Type**: Priority queue-based shortest path
 - **Properties**: Finds optimal path with weighted edges
 - **Use case**: Best for weighted graphs (treats all edges as weight 1 here)
@@ -144,6 +158,7 @@ This project includes a comprehensive test suite with over 100 tests covering al
 ### Running Tests
 
 **Using the test runner script (recommended):**
+
 ```bash
 # Run all tests
 python run_tests.py --all
@@ -158,6 +173,7 @@ python run_tests.py --coverage
 ```
 
 **Using pytest directly:**
+
 ```bash
 # Run all tests
 pytest tests/ -v
@@ -176,7 +192,7 @@ pytest tests/ --cov=. --cov-report=html
 
 - **Unit Tests**: Test individual components in isolation
   - `test_maze_generator.py` - Maze generation validation
-  - `test_maze_solver.py` - Solver coordination logic  
+  - `test_maze_solver.py` - Solver coordination logic
   - `test_dfs.py` - Depth-First Search algorithm
   - `test_bfs.py` - Breadth-First Search algorithm
   - `test_dijkstra.py` - Dijkstra's algorithm
@@ -186,6 +202,7 @@ pytest tests/ --cov=. --cov-report=html
 ### Test Coverage
 
 The test suite covers:
+
 - Algorithm correctness and optimality
 - Maze generation and structure validation
 - Edge cases and error handling
@@ -197,6 +214,7 @@ The test suite covers:
 Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ### Ways to Contribute
+
 - 🐛 Report bugs
 - 💡 Suggest new features
 - 🔧 Submit pull requests
@@ -205,7 +223,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 ## 📋 Roadmap
 
-- [ ] A* pathfinding algorithm
+- [ ] A\* pathfinding algorithm
 - [ ] Animated step-by-step solving
 - [ ] Maze saving/loading
 - [ ] Different maze generation algorithms
@@ -225,6 +243,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📞 Support
 
 If you have questions or need help:
+
 - 📫 Open an [issue](https://github.com/yourusername/maze-solver-visualizer/issues)
 - 💬 Start a [discussion](https://github.com/yourusername/maze-solver-visualizer/discussions)
 - ⭐ Star this repository if you find it helpful!
