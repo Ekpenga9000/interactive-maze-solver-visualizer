@@ -26,14 +26,16 @@ The Maze Solver & Visualizer follows a modular architecture with clear separatio
 ## Module Descriptions
 
 ### `main.py`
+
 - **Purpose**: Application entry point
-- **Responsibilities**: 
+- **Responsibilities**:
   - Initialize the application
   - Handle command-line arguments (future feature)
   - Create and run the visualizer
 - **Dependencies**: `maze_visualizer`
 
 ### `maze_generator.py`
+
 - **Purpose**: Maze generation using recursive backtracking
 - **Key Class**: `MazeGenerator`
 - **Responsibilities**:
@@ -43,6 +45,7 @@ The Maze Solver & Visualizer follows a modular architecture with clear separatio
 - **Algorithm**: Recursive backtracking with random direction selection
 
 ### `maze_solver.py`
+
 - **Purpose**: Pathfinding algorithm implementations
 - **Key Class**: `MazeSolver`
 - **Responsibilities**:
@@ -52,6 +55,7 @@ The Maze Solver & Visualizer follows a modular architecture with clear separatio
 - **Design Pattern**: Strategy pattern for algorithm selection
 
 ### `maze_visualizer.py`
+
 - **Purpose**: GUI and user interaction
 - **Key Class**: `MazeVisualizer`
 - **Responsibilities**:
@@ -94,11 +98,13 @@ User Input (Keyboard)
 ## Design Patterns
 
 ### Strategy Pattern
+
 - **Usage**: Algorithm selection in `MazeSolver`
 - **Benefits**: Easy to add new algorithms, clean interface
 - **Implementation**: `Algorithm` enum + method dispatch
 
 ### Observer Pattern (Implicit)
+
 - **Usage**: Visualizer observes state changes
 - **Benefits**: Loose coupling between components
 - **Implementation**: Event-driven updates through main loop
@@ -106,21 +112,25 @@ User Input (Keyboard)
 ## Key Design Decisions
 
 ### 1. Separation of Concerns
+
 - **Decision**: Separate generation, solving, and visualization
 - **Rationale**: Enables independent testing and development
 - **Trade-off**: Slightly more complex but much more maintainable
 
 ### 2. Immutable Maze Representation
+
 - **Decision**: Maze is generated once and not modified during solving
 - **Rationale**: Prevents bugs and enables algorithm comparison
 - **Trade-off**: Memory usage for large mazes
 
 ### 3. Coordinate System
+
 - **Decision**: (x, y) where x is column, y is row
 - **Rationale**: Matches Pygame coordinate system
 - **Trade-off**: Requires careful attention to array indexing
 
 ### 4. Algorithm Interface
+
 - **Decision**: All algorithms return (path, visited_cells)
 - **Rationale**: Consistent interface enables easy visualization
 - **Trade-off**: Some algorithms might not naturally track visited cells
@@ -128,17 +138,20 @@ User Input (Keyboard)
 ## Performance Considerations
 
 ### Time Complexity
+
 - **Maze Generation**: O(n) where n is number of cells
 - **DFS**: O(V + E) where V is vertices, E is edges
-- **BFS**: O(V + E) 
+- **BFS**: O(V + E)
 - **Dijkstra**: O((V + E) log V)
 
 ### Space Complexity
+
 - **Maze Storage**: O(n) for maze array
 - **Path Storage**: O(n) worst case for path
 - **Visited Tracking**: O(n) for visited set
 
 ### Optimization Opportunities
+
 1. **Lazy Loading**: Generate maze parts as needed
 2. **Algorithm Animation**: Step-by-step visualization
 3. **Multi-threading**: Separate generation and solving
@@ -147,16 +160,19 @@ User Input (Keyboard)
 ## Testing Strategy
 
 ### Unit Tests
+
 - Each module tested independently
 - Mock dependencies for isolated testing
 - Test edge cases and error conditions
 
 ### Integration Tests
+
 - Test component interactions
 - Verify data flow between modules
 - Test different maze sizes and configurations
 
 ### Visual Testing
+
 - Manual testing of GUI components
 - Screenshot comparison (future enhancement)
 - User interaction testing
@@ -164,18 +180,21 @@ User Input (Keyboard)
 ## Extension Points
 
 ### Adding New Algorithms
+
 1. Add enum value to `Algorithm`
 2. Implement algorithm method in `MazeSolver`
 3. Add keyboard shortcut in `MazeVisualizer`
 4. Update documentation
 
 ### Adding New Maze Types
+
 1. Create new generator class
 2. Ensure compatibility with solver interface
 3. Add selection mechanism in visualizer
 4. Test with existing algorithms
 
 ### Adding New Visualizations
+
 1. Add drawing methods to `MazeVisualizer`
 2. Implement new color schemes
 3. Add animation capabilities

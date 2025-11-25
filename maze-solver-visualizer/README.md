@@ -11,7 +11,7 @@ A Python application that generates random mazes and solves them using various p
 
 ## 🎯 Overview
 
-This project demonstrates fundamental computer science algorithms through an interactive maze-solving visualizer. Watch as different pathfinding algorithms explore mazes in real-time, comparing their efficiency and approach.
+This project demonstrates fundamental computer science algorithms through an interactive maze-solving visualizer. Watch as different pathfinding algorithms explore mazes in **real-time with live step-by-step visualization**, allowing you to see exactly how each algorithm thinks, explores, and makes decisions as it searches for the solution.
 
 ## Features
 
@@ -20,8 +20,8 @@ This project demonstrates fundamental computer science algorithms through an int
   - Depth-First Search (DFS) - Recursive implementation
   - Breadth-First Search (BFS) - Guaranteed shortest path
   - Dijkstra's Algorithm - Optimal pathfinding
-- **Real-time Visualization**: See the algorithms explore the maze step by step
-- **Interactive Controls**: Switch between algorithms and generate new mazes
+- **Real-time Visualization**: See algorithms explore the maze live as they make decisions, with adjustable animation speed
+- **Interactive Controls**: Control animation speed, switch algorithms, and generate new mazes
 
 ## Requirements
 
@@ -83,7 +83,10 @@ python test_components.py
 ### Controls
 
 - **G** - Generate a new random maze
-- **S** - Solve the current maze using selected algorithm
+- **S** - Solve the current maze using selected algorithm (animated)
+- **R** - Reset/stop current solving animation
+- **+** - Increase animation speed (faster)
+- **-** - Decrease animation speed (slower)
 - **1** - Switch to Depth-First Search (DFS)
 - **2** - Switch to Breadth-First Search (BFS)
 - **3** - Switch to Dijkstra's Algorithm
@@ -96,6 +99,7 @@ python test_components.py
 - **Green**: Start position (top-left)
 - **Red**: End position (bottom-right)
 - **Light Blue**: Visited cells during pathfinding
+- **Orange**: Currently exploring cell (real-time indicator)
 - **Yellow**: Solution path
 
 ## Project Structure

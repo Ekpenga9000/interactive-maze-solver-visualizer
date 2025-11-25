@@ -16,6 +16,7 @@ Please delete options that are not relevant.
 ## Related Issue
 
 Please link any related issues:
+
 - Fixes #(issue number)
 - Relates to #(issue number)
 
@@ -23,9 +24,9 @@ Please link any related issues:
 
 Please describe the changes made:
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Testing
 

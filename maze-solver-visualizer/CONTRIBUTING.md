@@ -68,6 +68,7 @@ Before submitting a pull request:
 ## Questions?
 
 If you have questions about contributing, feel free to:
+
 - Open an issue for discussion
 - Reach out to the maintainers
 

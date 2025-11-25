@@ -5,9 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-11-24
+
+### Added
+
+- **Animated Algorithm Visualization**: Step-by-step animated solving to see how algorithms explore the maze
+- **Animation Speed Control**: Adjustable animation speed with +/- keys (10ms to 500ms delay)
+- **Real-time Progress Tracking**: Live display of exploration progress and path building
+- **Animation Controls**: Reset/stop functionality with 'R' key
+- **Enhanced UI**: Real-time status display and animation speed indicator
+
+### Improved
+
+- **Visual Feedback**: Clear distinction between exploring (light blue) and solution path (yellow)
+- **User Experience**: Better control over visualization pace for educational purposes
+- **Status Information**: Enhanced UI showing current algorithm state and progress
+
 ## [1.0.0] - 2025-11-23
 
 ### Added
+
 - Initial release of Maze Solver & Visualizer
 - Maze generation using recursive backtracking algorithm
 - Three pathfinding algorithms:
@@ -24,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Contributing guidelines
 
 ### Features
+
 - **Interactive Controls:**
   - G: Generate new maze
   - S: Solve current maze
@@ -41,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Exploration efficiency metrics
 
 ### Technical Details
+
 - Python 3.12+ support
 - Pygame 2.6+ compatibility
 - Modular architecture with separate components
@@ -50,7 +69,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Planned
-- A* pathfinding algorithm
+
+- A\* pathfinding algorithm
 - Animated step-by-step solving
 - Maze saving/loading functionality
 - Different maze generation algorithms

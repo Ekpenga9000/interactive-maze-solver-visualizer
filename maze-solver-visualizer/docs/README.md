@@ -26,6 +26,7 @@ This directory contains additional documentation for the Maze Solver & Visualize
 Screenshots and demo GIFs will be added here once the project is fully documented.
 
 Expected files:
+
 - `demo.gif` - Animated demo of the application
 - `main_interface.png` - Main application interface
 - `dfs_demo.png` - Depth-First Search visualization
