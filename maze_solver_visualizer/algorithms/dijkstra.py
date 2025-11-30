@@ -2,16 +2,19 @@
 Dijkstra's algorithm implementation
 """
 
-from typing import List, Tuple, Set, Generator, Dict, Any
+from typing import List, Tuple, Set, Generator, Dict, Any, TYPE_CHECKING
 import heapq
 from .base_algorithm import BaseAlgorithm
+
+if TYPE_CHECKING:
+    from graph import ExplicitGraph
 
 class Dijkstra(BaseAlgorithm):
     """Dijkstra's pathfinding algorithm"""
     
     def solve(self, start: Tuple[int, int], end: Tuple[int, int]) -> Tuple[List[Tuple[int, int]], Set[Tuple[int, int]]]:
         """
-        Solve using Dijkstra's Algorithm
+        Solve using Dijkstra's Algorithm with weighted edges
         
         Args:
             start: Starting position (x, y)
@@ -40,9 +43,10 @@ class Dijkstra(BaseAlgorithm):
                 return path, visited
             
             x, y = current
-            for neighbor in self.get_neighbors(x, y):
+            # Use weighted neighbors from explicit graph
+            for neighbor, edge_weight in self.get_neighbors_with_weights(x, y):
                 if neighbor not in visited:
-                    new_distance = current_dist + 1  # Each step has cost 1
+                    new_distance = current_dist + edge_weight
                     
                     if neighbor not in distances or new_distance < distances[neighbor]:
                         distances[neighbor] = new_distance
@@ -106,9 +110,10 @@ class Dijkstra(BaseAlgorithm):
             
             # Process neighbors
             x, y = current
-            for neighbor in self.get_neighbors(x, y):
+            # Use weighted neighbors from explicit graph
+            for neighbor, edge_weight in self.get_neighbors_with_weights(x, y):
                 if neighbor not in visited:
-                    new_distance = current_dist + 1
+                    new_distance = current_dist + edge_weight
                     
                     if neighbor not in distances or new_distance < distances[neighbor]:
                         distances[neighbor] = new_distance
@@ -121,6 +126,7 @@ class Dijkstra(BaseAlgorithm):
                             'distances': distances.copy(),
                             'neighbor_updated': neighbor,
                             'new_distance': new_distance,
+                            'edge_weight': edge_weight,
                             'action': 'distance_updated'
                         }
         

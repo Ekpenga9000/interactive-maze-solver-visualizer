@@ -2,8 +2,11 @@
 Depth-First Search algorithm implementation
 """
 
-from typing import List, Tuple, Set, Generator, Dict, Any
+from typing import List, Tuple, Set, Generator, Dict, Any, TYPE_CHECKING
 from .base_algorithm import BaseAlgorithm
+
+if TYPE_CHECKING:
+    from graph import ExplicitGraph
 
 class DepthFirstSearch(BaseAlgorithm):
     """Depth-First Search pathfinding algorithm"""

@@ -3,9 +3,12 @@ Maze Solver Module
 Contains the main solver class that coordinates different pathfinding algorithms
 """
 
-from typing import List, Tuple, Set, Generator, Dict, Any
+from typing import List, Tuple, Set, Generator, Dict, Any, TYPE_CHECKING
 from enum import Enum
 from algorithms import DepthFirstSearch, BreadthFirstSearch, Dijkstra
+
+if TYPE_CHECKING:
+    from graph import ExplicitGraph
 
 class Algorithm(Enum):
     DFS = "Depth-First Search"
@@ -15,22 +18,22 @@ class Algorithm(Enum):
 class MazeSolver:
     """Coordinates different pathfinding algorithms for maze solving"""
     
-    def __init__(self, maze: List[List[int]]):
+    def __init__(self, graph: 'ExplicitGraph'):
         """
-        Initialize maze solver with algorithm instances
+        Initialize maze solver with algorithm instances using explicit graph
         
         Args:
-            maze: 2D list representing the maze (0 = path, 1 = wall)
+            graph: Explicit graph representation of the maze
         """
-        self.maze = maze
-        self.height = len(maze)
-        self.width = len(maze[0])
+        self.graph = graph
+        self.height = graph.height
+        self.width = graph.width
         
-        # Initialize algorithm instances
+        # Initialize algorithm instances with the explicit graph
         self.algorithms = {
-            Algorithm.DFS: DepthFirstSearch(maze),
-            Algorithm.BFS: BreadthFirstSearch(maze),
-            Algorithm.DIJKSTRA: Dijkstra(maze)
+            Algorithm.DFS: DepthFirstSearch(graph),
+            Algorithm.BFS: BreadthFirstSearch(graph),
+            Algorithm.DIJKSTRA: Dijkstra(graph)
         }
         
     def solve(self, start: Tuple[int, int], end: Tuple[int, int], 
@@ -68,6 +71,46 @@ class MazeSolver:
             raise ValueError(f"Unknown algorithm: {algorithm}")
         
         yield from self.algorithms[algorithm].solve_animated(start, end)
+    
+    def get_random_end_position(self, exclude_start: Tuple[int, int]) -> Tuple[int, int]:
+        """
+        Get a random valid end position from the graph
+        
+        Args:
+            exclude_start: Starting position to exclude from selection
+            
+        Returns:
+            Random end position
+        """
+        random_pos = self.graph.get_random_passable_position()
+        
+        # If random position is same as start, try to find another one
+        if random_pos == exclude_start:
+            passable_positions = self.graph.get_all_passable_positions()
+            available_positions = [pos for pos in passable_positions if pos != exclude_start]
+            
+            if available_positions:
+                import random
+                random_pos = random.choice(available_positions)
+        
+        return random_pos if random_pos else exclude_start
+    
+    def get_terrain_info(self, position: Tuple[int, int]) -> Dict[str, Any]:
+        """
+        Get terrain information for a position
+        
+        Args:
+            position: Position to check
+            
+        Returns:
+            Dictionary with terrain type and movement cost
+        """
+        terrain_type = self.graph.get_terrain_type(position)
+        return {
+            'terrain': terrain_type.name,
+            'cost': terrain_type.value,
+            'passable': self.graph.is_passable(position)
+        }
     
     def _get_neighbors(self, x: int, y: int) -> List[Tuple[int, int]]:
         """

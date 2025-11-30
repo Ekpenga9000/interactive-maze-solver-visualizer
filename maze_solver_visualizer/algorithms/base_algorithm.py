@@ -4,25 +4,38 @@ Defines the interface that all pathfinding algorithms must implement
 """
 
 from abc import ABC, abstractmethod
-from typing import List, Tuple, Set, Generator, Dict, Any
+from typing import List, Tuple, Set, Generator, Dict, Any, Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from graph import ExplicitGraph
 
 class BaseAlgorithm(ABC):
     """Abstract base class for maze solving algorithms"""
     
-    def __init__(self, maze: List[List[int]]):
+    def __init__(self, graph: 'ExplicitGraph'):
         """
-        Initialize the algorithm with a maze
+        Initialize the algorithm with an explicit graph
         
         Args:
-            maze: 2D list representing the maze (0 = path, 1 = wall)
+            graph: Explicit graph representation of the maze
         """
-        self.maze = maze
-        self.height = len(maze)
-        self.width = len(maze[0])
+        self.graph = graph
+        self.height = graph.height
+        self.width = graph.width
+    
+    @property
+    def maze(self) -> List[List[int]]:
+        """
+        Backward compatibility property that returns a 2D list representation
+        
+        Returns:
+            2D list where 0 = passable, 1 = wall (for backward compatibility)
+        """
+        return self.graph.to_simple_grid()
     
     def get_neighbors(self, x: int, y: int) -> List[Tuple[int, int]]:
         """
-        Get valid neighboring cells
+        Get valid neighboring cells using precomputed adjacency
         
         Args:
             x: X coordinate
@@ -31,19 +44,33 @@ class BaseAlgorithm(ABC):
         Returns:
             List of valid neighbor coordinates
         """
-        neighbors = []
-        directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]  # up, down, right, left
+        return self.graph.get_neighbor_positions((x, y))
+    
+    def get_neighbors_with_weights(self, x: int, y: int) -> List[Tuple[Tuple[int, int], float]]:
+        """
+        Get valid neighboring cells with their edge weights
         
-        for dx, dy in directions:
-            new_x, new_y = x + dx, y + dy
+        Args:
+            x: X coordinate
+            y: Y coordinate
             
-            # Check bounds and if cell is not a wall
-            if (0 <= new_x < self.width and 
-                0 <= new_y < self.height and 
-                self.maze[new_y][new_x] == 0):
-                neighbors.append((new_x, new_y))
+        Returns:
+            List of (neighbor_position, edge_weight) tuples
+        """
+        return self.graph.get_neighbors((x, y))
+    
+    def get_edge_weight(self, pos1: Tuple[int, int], pos2: Tuple[int, int]) -> float:
+        """
+        Get the weight of moving from pos1 to pos2
         
-        return neighbors
+        Args:
+            pos1: Starting position
+            pos2: Ending position
+            
+        Returns:
+            Edge weight
+        """
+        return self.graph.get_edge_weight(pos1, pos2)
     
     @abstractmethod
     def solve(self, start: Tuple[int, int], end: Tuple[int, int]) -> Tuple[List[Tuple[int, int]], Set[Tuple[int, int]]]:

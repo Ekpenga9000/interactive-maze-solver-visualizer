@@ -8,6 +8,7 @@ import sys
 from typing import List, Tuple, Set, Optional
 from maze_generator import MazeGenerator
 from maze_solver import MazeSolver, Algorithm
+from compatibility import LegacyMazeGenerator, LegacyMazeSolver
 
 class MazeVisualizer:
     """Handles visualization and user interaction for the maze solver"""
@@ -57,7 +58,7 @@ class MazeVisualizer:
         self.small_font = pygame.font.Font(None, 24)
         
         # Initialize maze and solver
-        self.maze_generator = MazeGenerator(maze_width, maze_height)
+        self.maze_generator = LegacyMazeGenerator(maze_width, maze_height)
         self.maze = None
         self.maze_solver = None
         self.current_algorithm = Algorithm.DFS
@@ -85,12 +86,15 @@ class MazeVisualizer:
         self.generate_new_maze()
     
     def generate_new_maze(self):
-        """Generate a new random maze"""
-        self.maze = self.maze_generator.generate()
-        self.maze_solver = MazeSolver(self.maze)
+        """Generate a new random maze with randomized start and end positions"""
+        self.maze = self.maze_generator.generate(randomize_positions=True)
+        self.maze_solver = LegacyMazeSolver(self.maze)
         self.start_pos = self.maze_generator.get_start_position()
         self.end_pos = self.maze_generator.get_end_position()
         self._reset_solution()
+        
+        # Print the new positions for user feedback
+        print(f"New maze generated! Start: {self.start_pos}, End: {self.end_pos}")
     
     def solve_maze(self):
         """Start animated solving of the current maze using the selected algorithm"""

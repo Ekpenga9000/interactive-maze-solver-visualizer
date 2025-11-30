@@ -2,9 +2,12 @@
 Breadth-First Search algorithm implementation
 """
 
-from typing import List, Tuple, Set, Generator, Dict, Any
+from typing import List, Tuple, Set, Generator, Dict, Any, TYPE_CHECKING
 from collections import deque
 from .base_algorithm import BaseAlgorithm
+
+if TYPE_CHECKING:
+    from graph import ExplicitGraph
 
 class BreadthFirstSearch(BaseAlgorithm):
     """Breadth-First Search pathfinding algorithm"""
