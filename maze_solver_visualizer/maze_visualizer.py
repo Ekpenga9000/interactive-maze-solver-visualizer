@@ -53,6 +53,10 @@ class MazeVisualizer:
         self.GRAY = (128, 128, 128)
         self.LIGHT_BLUE = (173, 216, 230)
         
+        # Breadth level colors for BFS and distance level colors for Dijkstra
+        self.BREADTH_COLOR_1 = (173, 216, 230)  # Light blue (original)
+        self.BREADTH_COLOR_2 = (255, 182, 193)  # Light red/pink
+        
         # Font for text
         self.font = pygame.font.Font(None, 28)
         self.small_font = pygame.font.Font(None, 24)
@@ -81,6 +85,12 @@ class MazeVisualizer:
         self.current_path = []
         self.algorithm_stack = []  # For DFS backtracking visualization
         self.exploring_cell = None
+        
+        # Breadth/Distance level tracking for colored visualization
+        self.breadth_levels = {}  # For BFS: position -> breadth_level
+        self.distances = {}       # For Dijkstra: position -> distance
+        self.branch_assignments = {}  # Track which branch each cell belongs to
+        self.branching_started = False  # Track when breadth > 2 starts
         
         # Generate initial maze
         self.generate_new_maze()
@@ -163,6 +173,18 @@ class MazeVisualizer:
         for state in generator:
             self.exploring_cell = state.get('current')
             
+            # Update breadth levels if provided
+            if 'breadth_levels' in state:
+                self.breadth_levels.update(state['breadth_levels'])
+            
+            # Update branch assignments if provided
+            if 'branch_assignments' in state:
+                self.branch_assignments.update(state['branch_assignments'])
+            
+            # Track when branching starts (breadth > 2)
+            if 'branching' in state and state['branching']:
+                self.branching_started = True
+            
             if state['action'] == 'neighbor_added':
                 self.current_visited.add(state.get('neighbor_added'))
             elif state['action'] == 'found':
@@ -178,6 +200,10 @@ class MazeVisualizer:
         
         for state in generator:
             self.exploring_cell = state.get('current')
+            
+            # Update distances if provided
+            if 'distances' in state:
+                self.distances.update(state['distances'])
             
             if state['action'] == 'visited':
                 self.current_visited.add(state['current'])
@@ -202,20 +228,67 @@ class MazeVisualizer:
                 else:  # Path
                     pygame.draw.rect(self.screen, self.WHITE, rect)
     
+    def get_breadth_color(self, position: Tuple[int, int]) -> Tuple[int, int, int]:
+        """Get color based on which branch the cell belongs to"""
+        # Get the branch assignment for this position
+        branch = self.branch_assignments.get(position, 'main')
+        
+        # Main branch (and early exploration) uses default color
+        if branch == 'main':
+            return self.BREADTH_COLOR_1  # Light blue for main branch
+        else:
+            return self.BREADTH_COLOR_2  # Light red for other branches
+    
+    def get_distance_color(self, distance: float) -> Tuple[int, int, int]:
+        """Get color for a specific distance value in Dijkstra - simplified to two colors"""
+        # Use distance groups instead of continuous gradient
+        max_distance = max(self.distances.values()) if self.distances else 1.0
+        normalized = distance / max_distance if max_distance > 0 else 0.0
+        
+        # Split into two groups: closer (light blue) and farther (light red)
+        if normalized <= 0.5:
+            return self.BREADTH_COLOR_1  # Light blue for closer distances
+        else:
+            return self.BREADTH_COLOR_2  # Light red for farther distances
+    
     def draw_visited_cells(self):
-        """Draw visited cells during pathfinding"""
+        """Draw visited cells with different colors based on algorithm and breadth/distance levels"""
         for x, y in self.current_visited:
             if (x, y) not in self.solution_path:  # Don't overwrite solution path
                 rect = pygame.Rect(x * self.cell_size, y * self.cell_size, 
                                  self.cell_size, self.cell_size)
-                pygame.draw.rect(self.screen, self.LIGHT_BLUE, rect)
+                
+                # Choose color based on current algorithm
+                if self.current_algorithm == Algorithm.BFS and (x, y) in self.branch_assignments:
+                    # Use branching-aware coloring for BFS
+                    color = self.get_breadth_color((x, y))
+                elif self.current_algorithm == Algorithm.DIJKSTRA and (x, y) in self.distances:
+                    # Use distance-based coloring for Dijkstra
+                    distance = self.distances[(x, y)]
+                    color = self.get_distance_color(distance)
+                else:
+                    # Default color for DFS or when level info is not available
+                    color = self.LIGHT_BLUE
+                
+                pygame.draw.rect(self.screen, color, rect)
         
-        # Highlight currently exploring cell
+        # Highlight currently exploring cell with a distinct border
         if self.exploring_cell and self.is_solving:
             x, y = self.exploring_cell
             rect = pygame.Rect(x * self.cell_size, y * self.cell_size, 
                              self.cell_size, self.cell_size)
-            pygame.draw.rect(self.screen, self.ORANGE, rect)
+            # Draw the cell with its appropriate color first
+            if self.current_algorithm == Algorithm.BFS and (x, y) in self.branch_assignments:
+                color = self.get_breadth_color((x, y))
+            elif self.current_algorithm == Algorithm.DIJKSTRA and (x, y) in self.distances:
+                distance = self.distances[(x, y)]
+                color = self.get_distance_color(distance)
+            else:
+                color = self.LIGHT_BLUE
+            
+            pygame.draw.rect(self.screen, color, rect)
+            # Add orange border for current cell
+            pygame.draw.rect(self.screen, self.ORANGE, rect, 3)
     
     def draw_path(self):
         """Draw the solution path"""
@@ -325,6 +398,10 @@ class MazeVisualizer:
         self.algorithm_stack = []
         self.exploring_cell = None
         self.solving_generator = None
+        self.breadth_levels = {}
+        self.distances = {}
+        self.branch_assignments = {}
+        self.branching_started = False
     
     def run(self):
         """Main game loop"""
