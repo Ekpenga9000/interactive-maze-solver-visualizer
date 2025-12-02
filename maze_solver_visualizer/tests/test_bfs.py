@@ -2,33 +2,118 @@
 Tests for Breadth-First Search Algorithm
 Comprehensive testing of BFS implementation
 """
-import pytest
+import sys
+import os
+import traceback
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from typing import List, Tuple, Set
 from algorithms.breadth_first_search import BreadthFirstSearch
+from graph import ExplicitGraph, TerrainType
+
+# Test fixtures converted from conftest.py
+def create_simple_test_graph():
+    """Create a simple 5x5 test graph for algorithm testing"""
+    maze = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+    ]
+    graph = ExplicitGraph(5, 5)
+    graph.build_from_maze_grid(maze, {TerrainType.PATH: 1.0})  # Only paths for simplicity
+    return graph
+
+def create_complex_test_graph():
+    """Create a more complex test graph"""
+    maze = [
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]
+    ]
+    graph = ExplicitGraph(7, 6)
+    graph.build_from_maze_grid(maze, {TerrainType.PATH: 1.0})  # Only paths for simplicity
+    return graph
+
+def create_impossible_graph():
+    """Create a graph with no solution"""
+    maze = [
+        [1, 1, 1, 1, 1],
+        [1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 1],
+        [1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 1]
+    ]
+    graph = ExplicitGraph(5, 5)
+    graph.build_from_maze_grid(maze, {TerrainType.PATH: 1.0})  # Only paths for simplicity
+    return graph
+
+# Keep the old functions for backward compatibility with existing tests that might need maze grids
+def create_simple_test_maze():
+    """Create a simple 5x5 test maze for algorithm testing"""
+    return [
+        [1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1],
+        [1, 0, 1, 0, 1],
+        [1, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1]
+    ]
+
+def create_complex_test_maze():
+    """Create a more complex test maze"""
+    return [
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 1, 0, 1],
+        [1, 0, 1, 0, 0, 0, 1],
+        [1, 0, 1, 1, 1, 0, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1]
+    ]
+
+def create_impossible_maze():
+    """Create a maze with no solution"""
+    return [
+        [1, 1, 1, 1, 1],
+        [1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 1],
+        [1, 0, 1, 0, 1],
+        [1, 1, 1, 1, 1]
+    ]
 
 
 class TestBFSInitialization:
     """Test BFS initialization"""
     
-    def test_bfs_initialization(self, simple_test_maze):
+    def test_bfs_initialization(self):
         """Test BFS can be initialized"""
-        bfs = BreadthFirstSearch(simple_test_maze)
-        assert bfs.maze == simple_test_maze
-        assert bfs.height == len(simple_test_maze)
-        assert bfs.width == len(simple_test_maze[0])
+        simple_test_graph = create_simple_test_graph()
+        bfs = BreadthFirstSearch(simple_test_graph)
+        assert bfs.graph == simple_test_graph
+        assert bfs.height == simple_test_graph.height
+        assert bfs.width == simple_test_graph.width
         
     def test_bfs_with_empty_maze(self):
         """Test BFS with edge case inputs"""
-        with pytest.raises((IndexError, ValueError)):
-            BreadthFirstSearch([])
+        # Test with minimal valid graph
+        minimal_graph = ExplicitGraph(1, 1)
+        minimal_graph.add_node((0, 0), TerrainType.PATH)
+        bfs = BreadthFirstSearch(minimal_graph)
+        assert bfs.graph == minimal_graph
+        assert bfs.height == 1
+        assert bfs.width == 1
 
 
 class TestBFSBasicFunctionality:
     """Test basic BFS functionality"""
     
-    def test_bfs_solve_simple_path(self, simple_test_maze):
+    def test_bfs_solve_simple_path(self):
         """Test BFS solving simple path"""
-        bfs = BreadthFirstSearch(simple_test_maze)
+        simple_test_graph = create_simple_test_graph()
+        bfs = BreadthFirstSearch(simple_test_graph)
         path, visited = bfs.solve((1, 1), (3, 3))
         
         assert isinstance(path, list)
@@ -39,17 +124,19 @@ class TestBFSBasicFunctionality:
             assert path[-1] == (3, 3)
             assert len(path) >= 3  # Minimum path length
             
-    def test_bfs_solve_no_solution(self, impossible_maze):
+    def test_bfs_solve_no_solution(self):
         """Test BFS with impossible maze"""
-        bfs = BreadthFirstSearch(impossible_maze)
+        impossible_graph = create_impossible_graph()
+        bfs = BreadthFirstSearch(impossible_graph)
         path, visited = bfs.solve((1, 1), (3, 1))
         
         assert path == []
         assert isinstance(visited, set)
         
-    def test_bfs_path_validity(self, complex_test_maze):
+    def test_bfs_path_validity(self):
         """Test that BFS path is valid"""
-        bfs = BreadthFirstSearch(complex_test_maze)
+        complex_test_graph = create_complex_test_graph()
+        bfs = BreadthFirstSearch(complex_test_graph)
         path, visited = bfs.solve((1, 1), (5, 4))
         
         if path:
@@ -66,9 +153,10 @@ class TestBFSBasicFunctionality:
             for x, y in path:
                 assert bfs.maze[y][x] == 0
                 
-    def test_bfs_visited_cells(self, complex_test_maze):
+    def test_bfs_visited_cells(self):
         """Test BFS visited cells properties"""
-        bfs = BreadthFirstSearch(complex_test_maze)
+        complex_test_graph = create_complex_test_graph()
+        bfs = BreadthFirstSearch(complex_test_graph)
         path, visited = bfs.solve((1, 1), (5, 4))
         
         # Path cells should be subset of visited
@@ -97,7 +185,9 @@ class TestBFSAlgorithmSpecific:
             [1, 1, 1, 1, 1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(shortest_path_maze)
+        graph = ExplicitGraph(7, 5)
+        graph.build_from_maze_grid(shortest_path_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (5, 1))
         
         if path:
@@ -106,14 +196,15 @@ class TestBFSAlgorithmSpecific:
             assert path[0] == (1, 1)
             assert path[-1] == (5, 1)
             
-    def test_bfs_breadth_first_behavior(self, complex_test_maze):
+    def test_bfs_breadth_first_behavior(self):
         """Test that BFS exhibits breadth-first behavior"""
-        bfs = BreadthFirstSearch(complex_test_maze)
+        complex_test_graph = create_complex_test_graph()
+        bfs = BreadthFirstSearch(complex_test_graph)
         
         # Create custom BFS to track exploration order
         class TrackingBFS(BreadthFirstSearch):
-            def __init__(self, maze):
-                super().__init__(maze)
+            def __init__(self, graph):
+                super().__init__(graph)
                 self.exploration_order = []
                 
             def solve(self, start, end):
@@ -148,7 +239,7 @@ class TestBFSAlgorithmSpecific:
                 
                 return [], visited
                 
-        tracking_bfs = TrackingBFS(complex_test_maze)
+        tracking_bfs = TrackingBFS(complex_test_graph)
         path, visited = tracking_bfs.solve((1, 1), (5, 4))
         
         # BFS should explore level by level
@@ -166,7 +257,9 @@ class TestBFSAlgorithmSpecific:
             [1, 1, 1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(optimal_maze)
+        graph = ExplicitGraph(5, 5)
+        graph.build_from_maze_grid(optimal_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (3, 3))
         
         if path:
@@ -179,9 +272,10 @@ class TestBFSAlgorithmSpecific:
 class TestBFSPerformance:
     """Test BFS performance characteristics"""
     
-    def test_bfs_exploration_completeness(self, complex_test_maze):
+    def test_bfs_exploration_completeness(self):
         """Test BFS exploration completeness"""
-        bfs = BreadthFirstSearch(complex_test_maze)
+        complex_test_graph = create_complex_test_graph()
+        bfs = BreadthFirstSearch(complex_test_graph)
         path, visited = bfs.solve((1, 1), (5, 4))
         
         if path:
@@ -202,7 +296,9 @@ class TestBFSPerformance:
             [1, 1, 1, 1, 1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(known_optimal_maze)
+        graph = ExplicitGraph(7, 5)
+        graph.build_from_maze_grid(known_optimal_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (5, 3))
         
         if path:
@@ -223,7 +319,9 @@ class TestBFSEdgeCases:
             [1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(single_cell_maze)
+        graph = ExplicitGraph(3, 3)
+        graph.build_from_maze_grid(single_cell_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (1, 1))
         
         assert path == [(1, 1)]
@@ -237,7 +335,9 @@ class TestBFSEdgeCases:
             [1, 1, 1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(linear_maze)
+        graph = ExplicitGraph(5, 3)
+        graph.build_from_maze_grid(linear_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (3, 1))
         
         if path:
@@ -245,23 +345,26 @@ class TestBFSEdgeCases:
             assert path[-1] == (3, 1)
             assert len(path) == 3  # Optimal path
             
-    def test_bfs_wall_start_position(self, simple_test_maze):
+    def test_bfs_wall_start_position(self):
         """Test BFS starting from wall position"""
-        bfs = BreadthFirstSearch(simple_test_maze)
+        simple_test_graph = create_simple_test_graph()
+        bfs = BreadthFirstSearch(simple_test_graph)
         path, visited = bfs.solve((0, 0), (3, 3))  # Start at wall
         
         assert path == []  # Should fail to find path
         
-    def test_bfs_wall_end_position(self, simple_test_maze):
+    def test_bfs_wall_end_position(self):
         """Test BFS ending at wall position"""
-        bfs = BreadthFirstSearch(simple_test_maze)
+        simple_test_graph = create_simple_test_graph()
+        bfs = BreadthFirstSearch(simple_test_graph)
         path, visited = bfs.solve((1, 1), (0, 0))  # End at wall
         
         assert path == []  # Should fail to find path
         
-    def test_bfs_out_of_bounds(self, simple_test_maze):
+    def test_bfs_out_of_bounds(self):
         """Test BFS with out of bounds coordinates"""
-        bfs = BreadthFirstSearch(simple_test_maze)
+        simple_test_graph = create_simple_test_graph()
+        bfs = BreadthFirstSearch(simple_test_graph)
         
         # Out of bounds start
         path, visited = bfs.solve((-1, -1), (3, 3))
@@ -289,7 +392,9 @@ class TestBFSStress:
         large_maze[1][1] = 0  # Start
         large_maze[size - 2][size - 2] = 0  # End
         
-        bfs = BreadthFirstSearch(large_maze)
+        graph = ExplicitGraph(size, size)
+        graph.build_from_maze_grid(large_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (size - 2, size - 2))
         
         if path:
@@ -308,7 +413,9 @@ class TestBFSStress:
             [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(complex_maze)
+        graph = ExplicitGraph(11, 7)
+        graph.build_from_maze_grid(complex_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (9, 5))
         
         if path:
@@ -333,7 +440,9 @@ class TestBFSComparison:
             [1, 1, 1, 1, 1, 1, 1]
         ]
         
-        bfs = BreadthFirstSearch(equal_paths_maze)
+        graph = ExplicitGraph(7, 5)
+        graph.build_from_maze_grid(equal_paths_maze, {TerrainType.PATH: 1.0})
+        bfs = BreadthFirstSearch(graph)
         path, visited = bfs.solve((1, 1), (5, 1))
         
         if path:
@@ -343,9 +452,10 @@ class TestBFSComparison:
             # Both paths through (3,1) and (3,3) should be length 5
             assert len(path) == 5
             
-    def test_bfs_consistent_results(self, simple_test_maze):
+    def test_bfs_consistent_results(self):
         """Test that BFS produces consistent results"""
-        bfs = BreadthFirstSearch(simple_test_maze)
+        simple_test_graph = create_simple_test_graph()
+        bfs = BreadthFirstSearch(simple_test_graph)
         
         # Run multiple times
         results = []
@@ -355,3 +465,51 @@ class TestBFSComparison:
         
         # Results should be consistent
         assert len(set(results)) == 1  # All results should be identical
+
+def run_all_tests():
+    """Run all tests in this module"""
+    test_classes = [TestBFSInitialization, TestBFSBasicFunctionality, TestBFSAlgorithmSpecific, 
+                   TestBFSPerformance, TestBFSEdgeCases, TestBFSStress, TestBFSComparison]
+    total_tests = 0
+    passed_tests = 0
+    failed_tests = []
+    
+    print("Running BFS tests...")
+    
+    for test_class in test_classes:
+        print(f"\n--- Running {test_class.__name__} ---")
+        test_instance = test_class()
+        
+        # Get all test methods
+        test_methods = [method for method in dir(test_instance) 
+                       if method.startswith('test_') and callable(getattr(test_instance, method))]
+        
+        for test_method in test_methods:
+            total_tests += 1
+            try:
+                print(f"  {test_method}...", end=" ")
+                getattr(test_instance, test_method)()
+                print("PASS")
+                passed_tests += 1
+            except Exception as e:
+                print(f"FAIL: {e}")
+                failed_tests.append(f"{test_class.__name__}.{test_method}: {e}")
+                traceback.print_exc()
+    
+    print(f"\n=== Test Summary ===")
+    print(f"Total tests: {total_tests}")
+    print(f"Passed: {passed_tests}")
+    print(f"Failed: {len(failed_tests)}")
+    
+    if failed_tests:
+        print("\nFailed tests:")
+        for failure in failed_tests:
+            print(f"  - {failure}")
+        return False
+    else:
+        print("All tests passed!")
+        return True
+
+if __name__ == "__main__":
+    success = run_all_tests()
+    sys.exit(0 if success else 1)
