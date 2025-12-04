@@ -20,7 +20,7 @@ from typing import List, Tuple, Set, Dict, Any
 class TestBaseAlgorithm:
     """Test the BaseAlgorithm base class"""
     
-    def test_base_algorithm_initialization(self):
+    def test_base_algorithm_initialization(self): 
         """Test that base algorithm initializes correctly"""
         graph = ExplicitGraph(5, 5)
         

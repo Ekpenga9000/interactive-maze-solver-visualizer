@@ -6,8 +6,8 @@ from typing import List, Tuple, Set, Generator, Dict, Any, TYPE_CHECKING
 from collections import deque
 from .base_algorithm import BaseAlgorithm
 
-if TYPE_CHECKING:
-    from graph import ExplicitGraph
+if TYPE_CHECKING: # to avoid circular imports
+    from graph import ExplicitGraph # Forward declaration of ExplicitGraph
 
 class BreadthFirstSearch(BaseAlgorithm):
     """Breadth-First Search pathfinding algorithm"""

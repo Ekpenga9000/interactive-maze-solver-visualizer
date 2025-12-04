@@ -17,7 +17,7 @@ class TerrainType(Enum):
     SAND = 2        # Slightly slow terrain
     ICE = 1         # Fast terrain (same as normal for now)
 
-@dataclass
+@dataclass #    Data class for graph nodes
 class GraphNode:
     """Represents a node in the explicit graph"""
     position: Tuple[int, int]

@@ -3,11 +3,11 @@ Base Algorithm class for maze solving
 Defines the interface that all pathfinding algorithms must implement
 """
 
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod # Abstract Base Class
 from typing import List, Tuple, Set, Generator, Dict, Any, Optional, TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from graph import ExplicitGraph
+if TYPE_CHECKING: # to avoid circular imports
+    from graph import ExplicitGraph # Forward declaration of ExplicitGraph
 
 class BaseAlgorithm(ABC):
     """Abstract base class for maze solving algorithms"""
@@ -23,7 +23,7 @@ class BaseAlgorithm(ABC):
         self.height = graph.height
         self.width = graph.width
     
-    @property
+    @property # Backward compatibility property
     def maze(self) -> List[List[int]]:
         """
         Backward compatibility property that returns a 2D list representation
