@@ -36,6 +36,9 @@ class MazeSolver:
             Algorithm.DIJKSTRA: Dijkstra(graph)
         }
         
+        # Store all possible paths
+        self.last_all_paths = set()
+        
     def solve(self, start: Tuple[int, int], end: Tuple[int, int], 
               algorithm: Algorithm) -> Tuple[List[Tuple[int, int]], Set[Tuple[int, int]]]:
         """
@@ -124,3 +127,50 @@ class MazeSolver:
             List of valid neighbor coordinates
         """
         return self.algorithms[Algorithm.DFS].get_neighbors(x, y)
+    
+    def find_all_paths(self, start: Tuple[int, int], end: Tuple[int, int], 
+                      max_paths: int = 50) -> Set[Tuple[int, int]]:
+        """
+        Find all cells that could potentially be part of any path from start to end
+        Uses fast bidirectional BFS instead of exhaustive path enumeration
+        
+        Args:
+            start: Starting position (x, y)
+            end: Ending position (x, y)
+            max_paths: Unused - kept for compatibility
+            
+        Returns:
+            Set of all cells that could be part of any valid path from start to end
+        """
+        # Fast approach: find all cells reachable from start that can also reach end
+        from collections import deque
+        
+        # BFS from start - find all reachable cells
+        start_reachable = set()
+        queue = deque([start])
+        start_reachable.add(start)
+        
+        while queue:
+            current = queue.popleft()
+            for neighbor in self.graph.get_neighbor_positions(current):
+                if neighbor not in start_reachable:
+                    start_reachable.add(neighbor)
+                    queue.append(neighbor)
+        
+        # BFS from end backwards - find all cells that can reach end
+        end_reachable = set()
+        queue = deque([end])
+        end_reachable.add(end)
+        
+        while queue:
+            current = queue.popleft()
+            for neighbor in self.graph.get_neighbor_positions(current):
+                if neighbor not in end_reachable:
+                    end_reachable.add(neighbor)
+                    queue.append(neighbor)
+        
+        # Intersection: cells that can reach end AND be reached from start
+        potential_path_cells = start_reachable & end_reachable
+        
+        self.last_all_paths = potential_path_cells
+        return potential_path_cells

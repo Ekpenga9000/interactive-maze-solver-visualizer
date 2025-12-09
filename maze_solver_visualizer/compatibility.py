@@ -51,6 +51,13 @@ class LegacyMazeGenerator:
         start = self.get_start_position()
         end = self.get_end_position()
         return maze, start, end
+    
+    def generate_multiple_paths(self, num_paths: int = 4) -> Tuple[List[List[int]], Tuple[int, int], Tuple[int, int]]:
+        """Generate a maze with multiple paths of different lengths"""
+        graph, start, end = self._generator.generate_multiple_paths(num_paths)
+        self._last_start = start
+        self._last_end = end
+        return graph.to_simple_grid(), start, end
 
 class LegacyMazeSolver:
     """Legacy maze solver that works with the old 2D list format"""
@@ -77,6 +84,11 @@ class LegacyMazeSolver:
                       algorithm: Algorithm):
         """Solve with animation using the new solver"""
         yield from self._solver.solve_animated(start, end, algorithm)
+    
+    def find_all_paths(self, start: Tuple[int, int], end: Tuple[int, int], 
+                      max_paths: int = 50) -> Set[Tuple[int, int]]:
+        """Find all possible paths using the new solver"""
+        return self._solver.find_all_paths(start, end, max_paths)
 
 # For backward compatibility, expose the legacy classes with the original names
 MazeGenerator = LegacyMazeGenerator

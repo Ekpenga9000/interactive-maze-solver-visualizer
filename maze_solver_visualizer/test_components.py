@@ -15,7 +15,8 @@ def test_maze_generator():
     from maze_generator import MazeGenerator
     
     generator = MazeGenerator(21, 15)
-    maze = generator.generate()
+    maze_graph = generator.generate()  # This returns ExplicitGraph
+    maze = generator.generate_legacy_maze()  # This returns 2D array for testing
     
     assert len(maze) == 15, "Maze height incorrect"
     assert len(maze[0]) == 21, "Maze width incorrect"
@@ -32,8 +33,8 @@ def test_maze_solver():
     
     # Create a simple test maze
     generator = MazeGenerator(21, 15)
-    maze = generator.generate()
-    solver = MazeSolver(maze)
+    maze_graph = generator.generate()  # ExplicitGraph for solver
+    solver = MazeSolver(maze_graph)
     
     start = generator.get_start_position()
     end = generator.get_end_position()

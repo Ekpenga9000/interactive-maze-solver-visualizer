@@ -52,6 +52,7 @@ class MazeVisualizer:
         self.ORANGE = (255, 165, 0)
         self.GRAY = (128, 128, 128)
         self.LIGHT_BLUE = (173, 216, 230)
+        self.LIGHT_GRAY = (211, 211, 211)  # Light gray for all paths
         
         # Breadth level colors for BFS and distance level colors for Dijkstra
         self.BREADTH_COLOR_1 = (173, 216, 230)  # Light blue (original)
@@ -92,6 +93,10 @@ class MazeVisualizer:
         self.branch_assignments = {}  # Track which branch each cell belongs to
         self.branching_started = False  # Track when breadth > 2 starts
         
+        # All paths visualization
+        self.all_possible_paths = set()  # All cells that are part of any valid path
+        self.show_all_paths = False      # Whether to show all paths
+        
         # Generate initial maze
         self.generate_new_maze()
     
@@ -105,6 +110,47 @@ class MazeVisualizer:
         
         # Print the new positions for user feedback
         print(f"New maze generated! Start: {self.start_pos}, End: {self.end_pos}")
+    
+    def generate_multiple_paths_maze(self):
+        """Generate a new maze with multiple paths of different lengths"""
+        maze, start_pos, end_pos = self.maze_generator.generate_multiple_paths(num_paths=4)
+        self.maze = maze
+        self.start_pos = start_pos
+        self.end_pos = end_pos
+        self.maze_solver = LegacyMazeSolver(self.maze)
+        self._reset_solution()
+        
+        # Print feedback
+        print(f"Multiple-path maze generated! Start: {self.start_pos}, End: {self.end_pos}")
+        print("This maze has 3-4 different length paths from start to end!")
+        print("Press 'P' to discover and show all possible paths")
+        
+        # Don't find all paths immediately - let user request it with P key
+        self.all_possible_paths = set()
+    
+    def _find_all_paths(self):
+        """Find all possible paths from start to end for visualization"""
+        if self.maze_solver and self.start_pos and self.end_pos:
+            try:
+                print("Computing reachable path cells...")
+                self.all_possible_paths = self.maze_solver.find_all_paths(
+                    self.start_pos, self.end_pos
+                )
+                print(f"Found {len(self.all_possible_paths)} cells that could be part of any path")
+                print("(Shows all cells reachable from start that can also reach the end)")
+            except Exception as e:
+                print(f"Could not find all paths: {e}")
+                self.all_possible_paths = set()
+    
+    def toggle_all_paths_display(self):
+        """Toggle the display of all possible paths"""
+        self.show_all_paths = not self.show_all_paths
+        if self.show_all_paths:
+            if not self.all_possible_paths:
+                self._find_all_paths()
+            print(f"All possible paths displayed in light gray ({len(self.all_possible_paths)} cells)")
+        else:
+            print("All paths display hidden")
     
     def solve_maze(self):
         """Start animated solving of the current maze using the selected algorithm"""
@@ -226,7 +272,11 @@ class MazeVisualizer:
                 if self.maze[y][x] == 1:  # Wall
                     pygame.draw.rect(self.screen, self.BLACK, rect)
                 else:  # Path
-                    pygame.draw.rect(self.screen, self.WHITE, rect)
+                    # Check if this cell is part of all possible paths
+                    if self.show_all_paths and (x, y) in self.all_possible_paths:
+                        pygame.draw.rect(self.screen, self.LIGHT_GRAY, rect)
+                    else:
+                        pygame.draw.rect(self.screen, self.WHITE, rect)
     
     def get_breadth_color(self, position: Tuple[int, int]) -> Tuple[int, int, int]:
         """Get color based on which branch the cell belongs to"""
@@ -360,6 +410,10 @@ class MazeVisualizer:
                     return False
                 elif event.key == pygame.K_g:
                     self.generate_new_maze()
+                elif event.key == pygame.K_m:
+                    self.generate_multiple_paths_maze()
+                elif event.key == pygame.K_p:
+                    self.toggle_all_paths_display()
                 elif event.key == pygame.K_s:
                     self.solve_maze()
                 elif event.key == pygame.K_r:
@@ -402,6 +456,7 @@ class MazeVisualizer:
         self.distances = {}
         self.branch_assignments = {}
         self.branching_started = False
+        # Don't reset all_possible_paths as it's useful to keep for visualization
     
     def run(self):
         """Main game loop"""
@@ -411,6 +466,8 @@ class MazeVisualizer:
         print("Maze Solver & Visualizer Started!")
         print("Controls:")
         print("  G - Generate new maze")
+        print("  M - Generate maze with multiple paths")
+        print("  P - Toggle all possible paths display (light gray)")
         print("  S - Solve current maze (animated)")
         print("  R - Reset/stop current solving")
         print("  + - Increase animation speed")

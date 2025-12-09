@@ -50,25 +50,26 @@ def main():
     # Create a smaller maze for console display
     print("Generating maze...")
     generator = MazeGenerator(25, 15)
-    maze = generator.generate()
+    maze_graph = generator.generate()  # This returns an ExplicitGraph
+    legacy_maze = generator.generate_legacy_maze()  # This returns 2D array for display
     start = generator.get_start_position()
     end = generator.get_end_position()
     
-    print(f"Maze size: {len(maze[0])} x {len(maze)}")
+    print(f"Maze size: {len(legacy_maze[0])} x {len(legacy_maze)}")
     print(f"Start: {start}, End: {end}")
     
     print("\nOriginal maze:")
-    print_maze(maze, start=start, end=end)
+    print_maze(legacy_maze, start=start, end=end)
     
     # Create solver
-    solver = MazeSolver(maze)
+    solver = MazeSolver(maze_graph)
     
     # Test all algorithms
     algorithms = [Algorithm.DFS, Algorithm.BFS, Algorithm.DIJKSTRA]
     results = {}
     
     for algorithm in algorithms:
-        path_length, cells_explored = demo_algorithm(solver, start, end, algorithm, maze)
+        path_length, cells_explored = demo_algorithm(solver, start, end, algorithm, legacy_maze)
         results[algorithm.value] = {
             'path_length': path_length,
             'cells_explored': cells_explored

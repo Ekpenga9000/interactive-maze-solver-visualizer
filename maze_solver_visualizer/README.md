@@ -13,6 +13,10 @@ A Python application that generates random mazes and solves them using various p
 
 This project demonstrates fundamental computer science algorithms through an interactive maze-solving visualizer. Watch as different pathfinding algorithms explore mazes in **real-time with live step-by-step visualization**, allowing you to see exactly how each algorithm thinks, explores, and makes decisions as it searches for the solution.
 
+## 🎥 Video Presentation
+
+Watch the video presentation and demo on YouTube: [Maze Solver & Visualizer - Demo](https://youtu.be/UnIALJ3nWes)
+
 ## Features
 
 - **Maze Generation**: Random maze generation using recursive backtracking algorithm
@@ -33,7 +37,7 @@ This project demonstrates fundamental computer science algorithms through an int
 1. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/yourusername/maze-solver-visualizer.git
+   git clone https://github.com/Ekpenga9000/maze-solver-visualizer.git
    cd maze-solver-visualizer
    ```
 
@@ -94,6 +98,8 @@ python test_components.py
 ### Controls
 
 - **G** - Generate a new random maze
+- **M** - Generate maze with multiple paths (3-4 different length routes)
+- **P** - Toggle all possible paths display (light gray overlay)
 - **S** - Solve the current maze using selected algorithm (animated)
 - **R** - Reset/stop current solving animation
 - **+** - Increase animation speed (faster)
@@ -103,10 +109,34 @@ python test_components.py
 - **3** - Switch to Dijkstra's Algorithm
 - **Q** - Quit the application
 
+## Features
+
+### Multiple Path Generation
+
+The **M** key generates special mazes with multiple paths of different lengths from start to end:
+
+- **Direct Path**: Shortest route (usually found by BFS)
+- **Top Route**: Medium length through upper maze area
+- **Bottom Route**: Medium-long length through lower maze area
+- **Zigzag Route**: Longest path with multiple waypoints
+
+This allows you to compare how different algorithms perform when multiple solutions exist.
+
+### All Paths Visualization
+
+The **P** key toggles a special visualization mode that shows all possible paths from start to end:
+
+- **Light Gray**: Highlights every cell that is part of any valid path to the goal
+- **Algorithm Comparison**: See how much of the solution space different algorithms explore
+- **Path Coverage**: Understand the complexity and connectivity of the maze
+
+This feature helps visualize the complete solution space and understand why different algorithms find different routes.
+
 ### Visual Elements
 
 - **Black**: Walls
 - **White**: Open paths
+- **Light Gray**: All possible paths (when enabled with P key)
 - **Green**: Start position (top-left)
 - **Red**: End position (bottom-right)
 - **Light Blue**: Visited cells during pathfinding
